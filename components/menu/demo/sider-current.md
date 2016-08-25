@@ -18,25 +18,30 @@ const Sider = React.createClass({
   },
   handleClick(e) {
     console.log('click ', e);
-    this.setState({
-      current: e.key,
-      openKeys: e.keyPath.slice(1),
-    });
+    this.setState({ current: e.key });
   },
-  onToggle(info) {
-    this.setState({
-      openKeys: info.open ? info.keyPath : info.keyPath.slice(1),
-    });
+  onOpenChange(openKeys) {
+    const latestOpenKey = openKeys.find((key) => !this.state.openKeys.includes(key));
+    this.setState({ openKeys: this.getKeyPath(latestOpenKey) });
+  },
+  getKeyPath(key) {
+    const map = {
+      sub1: ['sub1'],
+      sub2: ['sub2'],
+      sub3: ['sub2', 'sub3'],
+      sub4: ['sub4'],
+    };
+    return map[key] || [];
   },
   render() {
     return (
-      <Menu onClick={this.handleClick}
-        style={{ width: 240 }}
-        openKeys={this.state.openKeys}
-        onOpen={this.onToggle}
-        onClose={this.onToggle}
-        selectedKeys={[this.state.current]}
+      <Menu
         mode="inline"
+        openKeys={this.state.openKeys}
+        selectedKeys={[this.state.current]}
+        style={{ width: 240 }}
+        onOpenChange={this.onOpenChange}
+        onClick={this.handleClick}
       >
         <SubMenu key="sub1" title={<span><Icon type="mail" /><span>导航一</span></span>}>
           <Menu.Item key="1">选项1</Menu.Item>
